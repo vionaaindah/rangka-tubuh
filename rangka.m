@@ -97,8 +97,9 @@ function result_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 Img = handles.data1;
+Img = im2gray(Img); % Konversi citra ke grayscale
 [tinggi, lebar] = size(Img);
-ambang = 210; % Nilai ini bisa diubah-ubah
+ambang = 210; % Nilai threshold
 biner = zeros(tinggi, lebar);
 for baris=1 : tinggi
     for kolom=1 : lebar
@@ -115,6 +116,7 @@ axes(handles.proses1);
 handles.data4 = img;
 imshow(handles.data4);
 title('Citra Biner');
+
 % Template Type
 T1 = [0,1,1]';
 T2 = T1';
@@ -150,6 +152,7 @@ while (con < 15)
                 andOp1 = isequal(window(2,:),T4);
                 matchTemplate = andOp1;
             end
+            
             %         Connectivity number
             a=2;b=2;
             N0 = window(a,b);
@@ -161,8 +164,6 @@ while (con < 15)
             N6 = window(a+1,b-1);
             N7 = window(a+1,b);
             N8 = window(a+1,b+1);
-            
-            % arr = [(N1-(N3*N1*N2)) (N3-(N5*N3*N4)) (N5-(N7*N5*N6)) (N7-(N1*N7*N8))];
             
             val = [N1 N2 N3 N4 N5 N6 N7 N8];
             arr = [N1<N2 N2<N3 N3<N4 N4<N5 N5<N6 N6<N7 N7<N8 N8<N1];
@@ -180,6 +181,7 @@ while (con < 15)
             end
         end
     end
+    
     checKVal = sum(sum(outBinary));
     if (checKVal==0)
         con = con+1;
@@ -204,6 +206,7 @@ while (con < 15)
         template = 1;
     end
 end
+
 axes(handles.proses1);
 handles.data4 = img;
 imshow(handles.data4);
@@ -215,7 +218,7 @@ imshow(handles.data5);
 title('Bentuk Rangka');
 
 F = handles.data5;
-H = ones(4);
+H = ones(2);
 
 [th, lh]=size(H);
 [tf, lf]=size(F);
@@ -225,6 +228,7 @@ hoty = round(th/2);
 Xh = [];
 Yh = [];
 jum_anggota = 0;
+
 % Menentukan koordinat piksel bernilai 1 pada H
 for baris = 1 : th
      for kolom = 1 : lh
@@ -273,6 +277,7 @@ function biner_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 Img = handles.data1;
+Img = im2gray(Img); % Konversi citra ke grayscale
 [tinggi, lebar] = size(Img);
 ambang = 210; % Nilai ini bisa diubah-ubah
 biner = zeros(tinggi, lebar);
@@ -333,6 +338,7 @@ while (con < 15)
                 andOp1 = isequal(window(2,:),T4);
                 matchTemplate = andOp1;
             end
+            
             %         Connectivity number
             a=2;b=2;
             N0 = window(a,b);
@@ -344,8 +350,6 @@ while (con < 15)
             N6 = window(a+1,b-1);
             N7 = window(a+1,b);
             N8 = window(a+1,b+1);
-            
-            % arr = [(N1-(N3*N1*N2)) (N3-(N5*N3*N4)) (N5-(N7*N5*N6)) (N7-(N1*N7*N8))];
             
             val = [N1 N2 N3 N4 N5 N6 N7 N8];
             arr = [N1<N2 N2<N3 N3<N4 N4<N5 N5<N6 N6<N7 N7<N8 N8<N1];
@@ -363,6 +367,7 @@ while (con < 15)
             end
         end
     end
+    
     checKVal = sum(sum(outBinary));
     if (checKVal==0)
         con = con+1;
@@ -371,8 +376,8 @@ while (con < 15)
     binVal = find(outBinary==1);
     imgBin(binVal) = 0;
     axes(handles.proses2);
-    handles.data2 = outBinary,[];
-    imshow(handles.data2);
+    handles.data3 = outBinary,[];
+    imshow(handles.data3);
     title('Proses');
     outBinary  =zeros(row, col);
     template = template+1;
@@ -380,22 +385,23 @@ while (con < 15)
     %     Iteration
     if template == 5
         axes(handles.hasil);
-        handles.data4 = imgBin,[];
-        imshow(handles.data4);
-        title('Thinning');
+        handles.data5 = imgBin,[];
+        imshow(handles.data5);
+        title('Bentuk Rangka');
         outBinary  =zeros(row, col);
         template = 1;
     end
 end
+
 axes(handles.proses1);
-handles.data3 = img;
-imshow(handles.data3);
-title('Input Image');
+handles.data4 = img;
+imshow(handles.data4);
+title('Citra Awal');
 
 axes(handles.hasil);
-handles.data4 = imgBin,[];
-imshow(handles.data4);
-title('Thinning');
+handles.data5 = imgBin,[];
+imshow(handles.data5);
+title('Bentuk Rangka');
 
 
 % --- Executes on button press in dilasi.
@@ -405,7 +411,7 @@ function dilasi_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 img = handles.data1;
 F = im2bw(img, 0.5);
-H = ones(4);
+H = ones(2);
 
 [th, lh]=size(H);
 [tf, lf]=size(F);
