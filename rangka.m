@@ -444,4 +444,4 @@ end
 axes(handles.hasil);
 handles.data2 = G;
 imshow(handles.data2);
-title('Bentuk Rangka');
+title('Hasil Dilasi');
