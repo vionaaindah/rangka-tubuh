@@ -112,8 +112,47 @@ for baris=1 : tinggi
 end
 
 img = Biner;
+
+F = im2bw(img, 0.5);
+H = ones(7);
+
+[th, lh]=size(H);
+[tf, lf]=size(F);
+hotx = round(lh/2);
+hoty = round(th/2);
+ 
+Xh = [];
+Yh = [];
+jum_anggota = 0;
+% Menentukan koordinat piksel bernilai 1 pada H
+for baris = 1 : th
+     for kolom = 1 : lh
+          if H(baris, kolom) == 1
+              jum_anggota = jum_anggota + 1;
+              Xh(jum_anggota) = -hotx + kolom;
+              Yh(jum_anggota) = -hoty + baris;
+          end
+     end
+end
+G = zeros(tf, lf); % Nolkan semua pada hasil dilasi
+% Memproses dilasi
+for baris = 1 : tf
+    for kolom = 1 : lf
+        for indeks = 1 : jum_anggota
+            if F(baris, kolom) == 1
+                xpos = kolom + Xh(indeks);
+                ypos = baris + Yh(indeks);
+                if (xpos >= 1) && (xpos <= lf) && ...
+                        (ypos >= 1) && (ypos <= tf)
+                    G(ypos, xpos) = 1;
+                end
+            end
+        end
+    end
+end
+
 axes(handles.proses1);
-handles.data4 = img;
+handles.data4 = G;
 imshow(handles.data4);
 title('Citra Biner');
 
@@ -123,6 +162,7 @@ T2 = T1';
 T3 = [ 1,1,0]';
 T4 = T3';
 
+img = G;
 [row col plane] = size(img);
 imgBin = double(im2bw(img));
 ouImg = imgBin;
@@ -219,7 +259,7 @@ title('Bentuk Rangka');
 
 F = handles.data5;
 H = ones(2);
-
+ 
 [th, lh]=size(H);
 [tf, lf]=size(F);
 hotx = round(lh/2);
@@ -228,7 +268,7 @@ hoty = round(th/2);
 Xh = [];
 Yh = [];
 jum_anggota = 0;
-
+ 
 % Menentukan koordinat piksel bernilai 1 pada H
 for baris = 1 : th
      for kolom = 1 : lh
@@ -259,6 +299,7 @@ axes(handles.hasil);
 handles.data6 = G;
 imshow(handles.data6);
 title('Bentuk Rangka');
+
 
 % --- Executes on button press in reset.
 function reset_Callback(hObject, eventdata, handles)
@@ -411,7 +452,7 @@ function dilasi_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 img = handles.data1;
 F = im2bw(img, 0.5);
-H = ones(2);
+H = ones(7);
 
 [th, lh]=size(H);
 [tf, lf]=size(F);
