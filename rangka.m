@@ -335,15 +335,65 @@ axes(handles.hasil);
 handles.data2 = Biner;
 imshow(handles.data2);
 title('Citra Biner');
+guidata(hObject, handles);
+
+% --- Executes on button press in dilasi.
+function dilasi_Callback(hObject, eventdata, handles)
+% hObject    handle to dilasi (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+img = handles.data2;
+F = im2bw(img, 0.5);
+H = ones(7);
+
+[th, lh]=size(H);
+[tf, lf]=size(F);
+hotx = round(lh/2);
+hoty = round(th/2);
+ 
+Xh = [];
+Yh = [];
+jum_anggota = 0;
+% Menentukan koordinat piksel bernilai 1 pada H
+for baris = 1 : th
+     for kolom = 1 : lh
+          if H(baris, kolom) == 1
+              jum_anggota = jum_anggota + 1;
+              Xh(jum_anggota) = -hotx + kolom;
+              Yh(jum_anggota) = -hoty + baris;
+          end
+     end
+end
+G = zeros(tf, lf); % Nolkan semua pada hasil dilasi
+% Memproses dilasi
+for baris = 1 : tf
+    for kolom = 1 : lf
+        for indeks = 1 : jum_anggota
+            if F(baris, kolom) == 1
+                xpos = kolom + Xh(indeks);
+                ypos = baris + Yh(indeks);
+                if (xpos >= 1) && (xpos <= lf) && ...
+                        (ypos >= 1) && (ypos <= tf)
+                    G(ypos, xpos) = 1;
+                end
+            end
+        end
+    end
+end
+axes(handles.hasil);
+handles.data2 = G;
+imshow(handles.data2);
+title('Hasil Dilasi');
+guidata(hObject, handles);
 
 % --- Executes on button press in thinning.
 function thinning_Callback(hObject, eventdata, handles)
-img = handles.data1;
+img = handles.data2;
 % resize the image
 axes(handles.proses1);
-handles.data3 = img;
-imshow(handles.data3);
-title('Input Image');
+handles.data4 = img;
+imshow(handles.data4);
+title('Citra Biner Hasil Dilasi');
 % Template Type
 T1 = [0,1,1]';
 T2 = T1';
@@ -437,23 +487,16 @@ end
 axes(handles.proses1);
 handles.data4 = img;
 imshow(handles.data4);
-title('Citra Awal');
+title('Citra Biner Hasil Dilasi');
 
 axes(handles.hasil);
 handles.data5 = imgBin,[];
 imshow(handles.data5);
 title('Bentuk Rangka');
 
-
-% --- Executes on button press in dilasi.
-function dilasi_Callback(hObject, eventdata, handles)
-% hObject    handle to dilasi (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-img = handles.data1;
-F = im2bw(img, 0.5);
-H = ones(7);
-
+F = handles.data5;
+H = ones(2);
+ 
 [th, lh]=size(H);
 [tf, lf]=size(F);
 hotx = round(lh/2);
@@ -462,6 +505,7 @@ hoty = round(th/2);
 Xh = [];
 Yh = [];
 jum_anggota = 0;
+ 
 % Menentukan koordinat piksel bernilai 1 pada H
 for baris = 1 : th
      for kolom = 1 : lh
@@ -489,6 +533,6 @@ for baris = 1 : tf
     end
 end
 axes(handles.hasil);
-handles.data2 = G;
-imshow(handles.data2);
-title('Hasil Dilasi');
+handles.data6 = G;
+imshow(handles.data6);
+title('Bentuk Rangka');
